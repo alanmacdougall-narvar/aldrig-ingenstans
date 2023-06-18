@@ -1,6 +1,6 @@
 services:
   frontend:
-    profiles: ["production"]
+    profiles: ["frontend", "production"]
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -26,6 +26,7 @@ services:
     command: ["nginx", "-g", "daemon off;"]
 
   api-server:
+    profiles: ["api-server", "production"]
     platform: linux/x86_64
     build:
       context: ./api-server
@@ -33,8 +34,8 @@ services:
     container_name: api-server
     restart: unless-stopped
     environment:
-      DB_POST: db
-      DB_NAME: aldrig-dev
+      DB_HOST: postgres
+      DB_NAME: aldrig
       DB_USERNAME: ingen
       DB_PASSWORD: vilket ord som helst duger # "any word will do"
     volumes:
@@ -54,11 +55,13 @@ services:
       - pgdata:/var/lib/postgresql/data
     command: "postgres -c 'max_connections=500'"
     environment:
-      POSTGRES_DB: aldrig-dev
+      POSTGRES_DB: aldrig
       POSTGRES_USER: ingen
       POSTGRES_PASSWORD: vilket ord som helst duger
     ports:
       - "5432:5432"
+    networks:
+      - backend
 
   graphql-server:
     profiles: ["original"]

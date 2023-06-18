@@ -1,1 +1,3 @@
 api-server/tmp/*
+api-server/node_modules
+scratch.*

@@ -25,15 +25,15 @@ server {
   ssl_certificate ${SSL_CERTIFICATE};
   ssl_certificate_key ${SSL_CERTIFICATE_KEY};
 
-  location /graphql {
-    # Use Docker DNS resolver to handle domains like 'graphql-server'.
+  location /api {
+    # Use Docker DNS resolver to handle domains like 'api-server'.
     resolver 127.0.0.11; # docker DNS resolver
 
-    rewrite /graphql/(.*) /$1 break;
+    rewrite /api/(.*) /$1 break;
 
-    # This variable dance stops nginx from trying to find graphql-server at
+    # This variable dance stops nginx from trying to find api-server at
     # startup, which fails if it's not up yet.
-    set $upstream "graphql-server:4000";
+    set $upstream "api-server:3000";
     proxy_pass http://$upstream; # internal network, no need for ssl
 
     proxy_set_header Host $http_host;
