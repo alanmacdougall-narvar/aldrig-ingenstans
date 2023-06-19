@@ -14,18 +14,25 @@ Copy `.env.example` to `.env` and add the missing values. Same for
 
 Don't worry about `frontend/.env`; no secrets, just config.
 
+Run `docker compose run api-server bundle exec rails db:prepare` to set up the
+database and run migrations.
+
 ## Running the prod setup in local docker
 
 To run the entire project on localhost:
 
 ```
-COMPOSE_PROFILES='production' sudo docker compose up --build
+COMPOSE_PROFILES='production' docker compose up --build
 ```
 
 Accessible at https://localhost.
 
 This is a test of the whole system; not set up for local development with
 reloading, etc. To do actual dev work, see the next two sections.
+
+Note that there is a `bin/run_production.sh`, but it includes a `--detach`
+command which runs Docker in the background, and it uses `.env.production`,
+which specifies non-localhost SSL certificates.
 
 Note that SSL won't work unless you have self-signed keys in `/certbot/conf`.
 See `.env` for exact paths.

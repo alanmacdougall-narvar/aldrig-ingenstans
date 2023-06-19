@@ -2,6 +2,6 @@ api-server/tmp/*
 api-server/node_modules
 scratch.*
 .byebug_history
-api-server/log
+api-server/log/*
 .env
 .env.production
