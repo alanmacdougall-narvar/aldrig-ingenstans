@@ -7,6 +7,13 @@ När, var? Aldrig, ingenstans.
 Demonstrates a Docker config with a Postgres-backed Rails API server behind an
 nginx reverse proxy. Nginx also serves the JS frontend.
 
+## Initial setup
+
+Copy `.env.example` to `.env` and add the missing values. Same for
+`.env.production.example`.
+
+Don't worry about `frontend/.env`; no secrets, just config.
+
 ## Running the prod setup in local docker
 
 To run the entire project on localhost:
@@ -14,6 +21,8 @@ To run the entire project on localhost:
 ```
 COMPOSE_PROFILES='production' sudo docker compose up --build
 ```
+
+Accessible at https://localhost.
 
 This is a test of the whole system; not set up for local development with
 reloading, etc. To do actual dev work, see the next two sections.
@@ -50,6 +59,8 @@ bundle install # as needed
 bundle exec rails server
 ```
 
+Now load http://localhost:5173 and you're good.
+
 Note that `/api-server/.env` is a symlink to `/.env`. That's where we're getting
 the postgres credentials.
 
@@ -59,10 +70,7 @@ mess with it some more.
 
 ## Running in production
 
-See `.env.production` (and `frontend/.env.production`) for differences. These
-env files do not contain secrets. I mean, they do contain the database username
-and password, but the only publicly accessible server will be nginx, so that
-should be irrelevant.
+See `.env.production` (and `frontend/.env.production`) for differences.
 
 ```
 ./bin/run_production.sh

@@ -3,3 +3,5 @@ api-server/node_modules
 scratch.*
 .byebug_history
 api-server/log
+.env
+.env.production
