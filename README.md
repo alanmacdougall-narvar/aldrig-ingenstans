@@ -4,7 +4,8 @@ När, var? Aldrig, ingenstans.
 
 "When, where? Nowhere, never."
 
-TODO: update rest of document
+Demonstrates a Docker config with a Postgres-backed Rails API server behind an
+nginx reverse proxy. Nginx also serves the JS frontend.
 
 ## Running the prod setup in local docker
 
@@ -20,53 +21,65 @@ reloading, etc. To do actual dev work, see the next two sections.
 Note that SSL won't work unless you have self-signed keys in `/certbot/conf`.
 See `.env` for exact paths.
 
+I used `mkcert` to run a local certificate authority for my self-signed keys on
+localhost:
+
+```
+brew install mkcert
+mkcert -install
+mkcert localhost 127.0.0.1 # generates local keys
+# now you can move those local keys to /certbot/conf
+```
+
 ## Running in development
 
 ```
-sudo docker compose up --build
+COMPOSE_PROFILES='' sudo docker compose up --build
 ```
 
-This will start only the MongoDB database; run the server and frontend
+This will start only the Postgres database; run the server and frontend
 separately:
 
 ```
 # in frontend
+npm install # as needed
 npm run dev
 
-# in graphql-server
-npm run debug
+# in api-server
+bundle install # as needed
+bundle exec rails server
 ```
+
+Note that `/api-server/.env` is a symlink to `/.env`. That's where we're getting
+the postgres credentials.
+
+Why not develop in Docker? I don't know, man, I just like hitting a `byebug` and
+getting an interactive console. It's probably possible in Docker, I'd have to
+mess with it some more.
 
 ## Running in production
 
 See `.env.production` (and `frontend/.env.production`) for differences. These
-env files do not contain secrets.
+env files do not contain secrets. I mean, they do contain the database username
+and password, but the only publicly accessible server will be nginx, so that
+should be irrelevant.
 
 ```
 ./bin/run_production.sh
 ```
 
-### Cleanup script
-
-This application is anonymous but ephemeral. We want to delete all videos older
-than 30 days. Add this script to the root crontab (I chose to run daily at 4am):
-
-```
-<cron timing expression> /home/<user>/raiseyourgame/bin/delete_old_videos.sh
-```
-
 ### SSL certificates
 
 Note that SSL won't work unless Certbot-generated keys are present in
-`/certbot/conf`. To produce these keys,
+`/certbot/conf`. To produce these keys, run this on the server:
 
 ```
-sudo docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d raiseyourga.me
+sudo docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d aldrig-ingestans.site
 ```
 
 Use the root crontab to set up SSL key renewal:
 ```
-<cron timing expression> /home/<user>/raiseyourgame/bin/renew_certificates.sh
+<cron timing expression> /home/<user>/aldrig-ingestans/bin/renew_certificates.sh
 ```
 
 ### If frontend fails to build on prod

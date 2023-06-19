@@ -35,9 +35,9 @@ services:
     restart: unless-stopped
     environment:
       DB_HOST: postgres
-      DB_NAME: aldrig
-      DB_USERNAME: ingen
-      DB_PASSWORD: vilket ord som helst duger # "any word will do"
+      DB_NAME: $DB_NAME
+      DB_USERNAME: $DB_USERNAME
+      DB_PASSWORD: $DB_PASSWORD
     volumes:
       - ./api-server/:/app/
     ports:
@@ -55,27 +55,12 @@ services:
       - pgdata:/var/lib/postgresql/data
     command: "postgres -c 'max_connections=500'"
     environment:
-      POSTGRES_DB: aldrig
-      POSTGRES_USER: ingen
-      POSTGRES_PASSWORD: vilket ord som helst duger
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
     ports:
       - "5432:5432"
     networks:
-      - backend
-
-  graphql-server:
-    profiles: ["original"]
-    build:
-      context: ./graphql-server
-      dockerfile: Dockerfile
-    container_name: graphql-server
-    restart: unless-stopped
-    environment:
-      MONGODB_URI: $MONGODB_URI
-    # ports:
-    #   - "4000:4000"
-    networks:
-      - frontend
       - backend
 
   # LetsEncrypt certbot; certbot.eff.org

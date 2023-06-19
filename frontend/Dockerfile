@@ -11,8 +11,7 @@ RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python
 RUN npm install
 COPY . .
 RUN cp .env.production .env
-RUN npm run compile
-RUN npm run build-only
+RUN npm run build
 
 # build backend
 FROM nginx:alpine
