@@ -34,6 +34,7 @@ services:
     container_name: api-server
     restart: unless-stopped
     environment:
+      RAILS_ENV: $RAILS_ENV
       DB_HOST: postgres
       DB_NAME: $DB_NAME
       DB_USERNAME: $DB_USERNAME
@@ -67,10 +68,8 @@ services:
   # LetsEncrypt certbot; certbot.eff.org
   certbot:
     # In this context, certbot can't configure nginx directly, so no point
-    # running it as a service. Instead, while the frontend server is running,
-    # run the certonly command to write the updated certificates:
-    #
-    # sudo docker compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d aldrig-ingenstans.site
+    # running it as a service. Instead, run the certonly command to write the
+    # updated certificates. See README for details.
     profiles: ["certbot"]
     image: certbot/certbot:latest
     volumes:

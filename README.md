@@ -79,6 +79,9 @@ mess with it some more.
 
 See `.env.production` (and `frontend/.env.production`) for differences.
 
+Run `sudo docker compose --env-file .env.production run api-server bundle exec
+rails db:prepare` to set up the database, of course.
+
 ```
 ./bin/run_production.sh
 ```
@@ -89,12 +92,23 @@ Note that SSL won't work unless Certbot-generated keys are present in
 `/certbot/conf`. To produce these keys, run this on the server:
 
 ```
-sudo docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d aldrig-ingestans.site
+sudo docker compose \
+  --env-file .env.production \
+  run --rm certbot certonly \
+  --webroot \
+  --webroot-path /var/www/certbot/ \
+  -d aldrig-ingenstans.site
 ```
+
+Of course, until you have SSL keys, you can't have a valid SSL block in your
+nginx config, so you'll need to temporarily comment out the entire SSL `server`
+block (the one that begins with `listen 433 ssl;`). Then run the `certbot`
+command, then restore the SSL block and restart nginx (or just run
+`./bin/run_production.sh` again).
 
 Use the root crontab to set up SSL key renewal:
 ```
-<cron timing expression> /home/<user>/aldrig-ingestans/bin/renew_certificates.sh
+<cron timing expression> /home/<user>/aldrig-ingenstans/bin/renew_certificates.sh
 ```
 
 ### If frontend fails to build on prod
