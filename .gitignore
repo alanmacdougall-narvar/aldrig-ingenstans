@@ -5,3 +5,4 @@ scratch.*
 api-server/log/*
 .env
 .env.production
+certbot/conf/live/localhost/*
